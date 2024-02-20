@@ -132,6 +132,29 @@ async def predict(file: UploadFile = File(...)):
 def read_root():
     return {"message": "Welcome to the prediction API"}
 
+# Server-side pseudo-code
+@app.route('/generate_graph', methods=['POST'])
+def generate_graph():
+    # Assume CSV data is sent in the request
+    csv_file = request.files['data']
+    df = pd.read_csv(csv_file)
+    
+    # Use pandas and matplotlib to generate a graph
+    # For simplicity, let's assume df has columns 'Category' and 'Value'
+    plt.figure(figsize=(10, 6))
+    plt.bar(df['Category'], df['Value'], color='skyblue')
+    plt.xlabel('Category')
+    plt.ylabel('Value')
+    plt.title('Graph Title')
+    
+    # Save the plot to a temporary file or a permanent storage
+    image_path = '/path/to/image/graph.png'
+    plt.savefig(image_path)
+    
+    # Return the URL to the image
+    return jsonify({'imageUrl': 'http://yourserver.com/path/to/image/graph.png'})
+
+
 # Run the API with uvicorn
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000, limit_concurrency=5, limit_max_requests=100, timeout_keep_alive=120)  # Adjust the host and port as needed
